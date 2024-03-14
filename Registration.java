@@ -52,7 +52,7 @@ public class Registration{
 
     
     public String selectAllNames(String tableName){     
-
+    
         try {
             Statement myStmt = dbConnect.createStatement();
             results = myStmt.executeQuery("SELECT LName, FName FROM " + tableName);
@@ -68,21 +68,37 @@ public class Registration{
     }
     
     
-    public void insertNewCompetitor(String id, String lName, String fName, int age, String instrument, String teacherID){
-       
-        if(!validateTeacher(teacherID)){
+    public void insertNewCompetitor(String id, String lName, String fName, int age, String instrument, String teacherID) {
+        if (!validateTeacher(teacherID)) {
             throw new IllegalArgumentException("Student must have a registered teacher.");
         }
 
-        if(age < 5 || age > 18){
+        if (age < 5 || age > 18) {
             throw new IllegalArgumentException("Student must be between the ages of 5 and 18.");
         }
-             
 
-/***********ADD CODE HERE***********/                
+        try {
+            // Create prepared statement to insert new competitor
+            PreparedStatement preparedStatement = dbConnect.prepareStatement(
+                    "INSERT INTO COMPETITOR (CompetitorID, LName, FName, Age, Instrument, TeacherID) VALUES (?, ?, ?, ?, ?, ?)");
 
+            // Set values for the prepared statement
+            preparedStatement.setString(1, id);
+            preparedStatement.setString(2, lName);
+            preparedStatement.setString(3, fName);
+            preparedStatement.setInt(4, age);
+            preparedStatement.setString(5, instrument);
+            preparedStatement.setString(6, teacherID);
 
-    }    
+            // Execute the insert statement
+            preparedStatement.executeUpdate();
+
+            // Close the prepared statement
+            preparedStatement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }  
 
     
 // Used to ensure that any new students are connected to an existing teacher    
@@ -112,11 +128,23 @@ public class Registration{
     }    
     
  
-    public void deleteCompetitor(String id){
+    public void deleteCompetitor(String id) {
+        try {
+            // Create prepared statement to delete the specified competitor
+            PreparedStatement preparedStatement = dbConnect.prepareStatement(
+                    "DELETE FROM COMPETITOR WHERE CompetitorID = ?");
 
-/***********ADD CODE HERE***********/                
+            // Set the ID parameter for the prepared statement
+            preparedStatement.setString(1, id);
 
+            // Execute the delete statement
+            preparedStatement.executeUpdate();
 
+            // Close the prepared statement
+            preparedStatement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }    
 
     public void close() {

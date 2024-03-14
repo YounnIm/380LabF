@@ -7,7 +7,7 @@
 
 DROP DATABASE IF EXISTS competition;
 CREATE DATABASE competition; 
-\c competition
+
 
 
 DROP TABLE IF EXISTS STUDIO;
