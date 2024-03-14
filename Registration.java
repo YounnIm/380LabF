@@ -31,8 +31,11 @@ public class Registration{
 //Must create a connection to the database, no arguments, no return value    
     public void initializeConnection(){
 
-/***********ADD CODE HERE***********/                
-
+        try{
+            dbConnect = DriverManager.getConnection("jdbc:postgresql://localhost/competition", "oop", "ucalgary");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
     
     String getDburl(){
@@ -50,7 +53,17 @@ public class Registration{
     
     public String selectAllNames(String tableName){     
 
-/***********ADD CODE HERE***********/                
+        try {
+            Statement myStmt = dbConnect.createStatement();
+            results = myStmt.executeQuery("SELECT LName, FName FROM " + tableName);
+            while (results.next()) {
+                names.append(results.getString("LName")).append(", ").append(results.getString("FName")).append("\n");
+            }
+            myStmt.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return names.toString().trim();               
 
     }
     
@@ -108,7 +121,12 @@ public class Registration{
 
     public void close() {
         
-/***********ADD CODE HERE***********/                
+        try {
+            results.close();
+            dbConnect.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }     
 
     }
     
